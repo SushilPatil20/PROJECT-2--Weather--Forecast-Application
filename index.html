@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Sushil">
+    <title>Weather Forcasting Application</title>
+
+    <!-- --------------------------------- Changing Favicon --------------------------------- -->
+    <link rel="icon"
+        href="http://purepng.com/public/uploads/large/purepng.com-weather-iconsymbolsiconsapple-iosiosios-8-iconsios-8-721522596142qx4ep.png">
+
+
+    <!-- --------------------------------- Importing tailwind css --------------------------------- -->
+
+    <link rel="stylesheet" href="./src/output.css">
+
+
+    <!-- --------------------------------- Tailwind CDN (Script) --------------------------------- -->
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+</head>
+
+<body class="bg-gradient-to-r from-purple-800 to-blue-300 overflow-x-hidden min-h-screen">
+    <header class="py-6 flex items-center justify-center bg-purple-500">
+        <nav>
+            <h1 class="text-2xl font-semibold text-white">Weather Dashboard</h1>
+        </nav>
+    </header>
+    <main class="px-4 pb-6 md:px-12 mt-8">
+        <section class="md:flex md:items-start md:space-x-12">
+
+            <!-- ------------------------------------------------ Top banner ------------------------------------------------ -->
+
+            <section class="bg-white space-y-4 py-6 md:w-2/5">
+                <section class="w-1/2 mx-auto space-y-4 sm:w-4/5">
+                    <label for="cityNameInput" class="block font-bold text-gray-700">Enter a City Name</label>
+                    <input type="text" placeholder="E.g., New York, London, Tokyo" id="cityNameInput"
+                        class="border border-gray-400 rounded py-2 px-3 outline-none w-full" required>
+                </section>
+                <section class="space-y-4 w-1/2 sm:w-4/5 mx-auto">
+                    <button onclick="searchCity()"
+                        class="w-full bg-blue-500 py-2 text-white font-semibold rounded-md mx-auto block hover:bg-blue-600">Search</button>
+                    <section class="flex items-center justify-center space-x-4 w-full mx-auto">
+                        <div class="border border-b border-gray-400 w-full"></div>
+                        <strong class="text-gray-500 text-lg font-semibold">or</strong>
+                        <div class="border border-b border-gray-400 w-full"></div>
+                    </section>
+                    <button onclick="getCurrentLocation()"
+                        class="w-full bg-gray-500 py-2 text-white font-semibold rounded-md mx-auto block hover:bg-gray-600">Use
+                        Current
+                        Location</button>
+                </section>
+            </section>
+
+            <!-- ------------------------------------------------ Weather Demonstrating Section ------------------------------------------------ -->
+
+            <section
+                class="bg-blue-500 flex flex-col items-center py-6 space-y-3 sm:flex-row sm:px-12 md:w-3/5 md:rounded-md md:justify-between">
+                <img src="https://www.creativefabrica.com/wp-content/uploads/2021/03/31/weather-icon-illustration03-Graphics-10205167-1.jpg"
+                    alt="" width="200" height="200" class="object-cover">
+                <section class="text-white space-y-3 w-full text-center sm:text-left sm:ml-12">
+                    <h3 class="text-2xl font-semibold">London (Current Date)</h3>
+                    <p>Temperature : <span>7.06<sup>o</sup></span>C</p>
+                    <p>Wind : 2.85 M/S</p>
+                    <p>Humidity : 88%</p>
+                </section>
+            </section>
+        </section>
+
+        <!-- ------------------------------------------------ Extended weather data Demonstration  -->
+
+
+        <section class="mt-10">
+            <h2 class="text-2xl font-semibold my-4">5-Day Forecast</h2>
+            <section class="space-y-4 md:flex md:flex-wrap md:space-y-0 md:gap-4">
+                <section
+                    class="bg-gray-300 text-gray-700 space-y-3 rounded-md px-6 p-3 flex flex-col items-center sm:flex-row sm:space-x-12 md:flex-col md:mx-auto md:space-x-0 md:text-center">
+                    <section class="space-y-4">
+                        <h3 class="text-xl font-semibold">2024-04-24</h3>
+                        <img src="https://www.creativefabrica.com/wp-content/uploads/2021/03/31/weather-icon-illustration03-Graphics-10205167-1.jpg"
+                            alt="" width="100" height="100" class="object-cover">
+                    </section>
+                    <section class="space-y-2">
+                        <p>Temperature :<span>7.06<sup>o</sup>C</span></p>
+                        <p>Wind :<span>2.85 M/C</span></p>
+                        <p>Humidity:<span>88%</span></p>
+                    </section>
+                </section>
+                <section
+                    class="bg-gray-300 text-gray-700 space-y-3 rounded-md px-6 p-3 flex flex-col items-center sm:flex-row sm:space-x-12 md:flex-col md:mx-auto md:space-x-0 md:text-center">
+                    <section class="space-y-4">
+                        <h3 class="text-xl font-semibold">2024-04-24</h3>
+                        <img src="https://www.creativefabrica.com/wp-content/uploads/2021/03/31/weather-icon-illustration03-Graphics-10205167-1.jpg"
+                            alt="" width="100" height="100" class="object-cover">
+                    </section>
+                    <section class="space-y-2">
+                        <p>Temperature :<span>7.06<sup>o</sup>C</span></p>
+                        <p>Wind :<span>2.85 M/C</span></p>
+                        <p>Humidity:<span>88%</span></p>
+                    </section>
+                </section>
+                <section
+                    class="bg-gray-300 text-gray-700 space-y-3 rounded-md px-6 p-3 flex flex-col items-center sm:flex-row sm:space-x-12 md:flex-col md:mx-auto md:space-x-0 md:text-center">
+                    <section class="space-y-4">
+                        <h3 class="text-xl font-semibold">2024-04-24</h3>
+                        <img src="https://www.creativefabrica.com/wp-content/uploads/2021/03/31/weather-icon-illustration03-Graphics-10205167-1.jpg"
+                            alt="" width="100" height="100" class="object-cover">
+                    </section>
+                    <section class="space-y-2">
+                        <p>Temperature :<span>7.06<sup>o</sup>C</span></p>
+                        <p>Wind :<span>2.85 M/C</span></p>
+                        <p>Humidity:<span>88%</span></p>
+                    </section>
+                </section>
+                <section
+                    class="bg-gray-300 text-gray-700 space-y-3 rounded-md px-6 p-3 flex flex-col items-center sm:flex-row sm:space-x-12 md:flex-col md:mx-auto md:space-x-0 md:text-center">
+                    <section class="space-y-4">
+                        <h3 class="text-xl font-semibold">2024-04-24</h3>
+                        <img src="https://www.creativefabrica.com/wp-content/uploads/2021/03/31/weather-icon-illustration03-Graphics-10205167-1.jpg"
+                            alt="" width="100" height="100" class="object-cover">
+                    </section>
+                    <section class="space-y-2">
+                        <p>Temperature :<span>7.06<sup>o</sup>C</span></p>
+                        <p>Wind :<span>2.85 M/C</span></p>
+                        <p>Humidity:<span>88%</span></p>
+                    </section>
+                </section>
+                <section
+                    class="bg-gray-300 text-gray-700 space-y-3 rounded-md px-6 p-3 flex flex-col items-center sm:flex-row sm:space-x-12 md:flex-col md:mx-auto md:space-x-0 md:text-center">
+                    <section class="space-y-4">
+                        <h3 class="text-xl font-semibold">2024-04-24</h3>
+                        <img src="https://www.creativefabrica.com/wp-content/uploads/2021/03/31/weather-icon-illustration03-Graphics-10205167-1.jpg"
+                            alt="" width="100" height="100" class="object-cover">
+                    </section>
+                    <section class="space-y-2">
+                        <p>Temperature :<span>7.06<sup>o</sup>C</span></p>
+                        <p>Wind :<span>2.85 M/C</span></p>
+                        <p>Humidity:<span>88%</span></p>
+                    </section>
+                </section>
+            </section>
+        </section>
+    </main>
+
+
+
+
+
+
+    <script src="./src/Js/script.js"></script>
+</body>
+
+</html>
