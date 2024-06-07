@@ -22,10 +22,17 @@
 </head>
 
 <body class="bg-gradient-to-r from-purple-800 to-blue-300 overflow-x-hidden min-h-screen">
-    <header class="py-6 flex items-center justify-center bg-purple-500">
+    <header class="py-6 flex items-center justify-center bg-blue-800">
         <nav>
             <h1 class="text-2xl font-semibold text-white">Weather Dashboard</h1>
         </nav>
+        <!-- <select name="" id="">
+            <option value="mumbai">Mumbai</option>
+            <option value="pune">Pune</option>
+            <option value="nashik">Nashik</option>
+            <option value="palghar">Palghar</option>
+            <option value="karnataka">arnataka</option>
+        </select> -->
     </header>
     <main class="px-4 pb-6 md:px-12 mt-8">
         <section class="md:flex md:items-start md:space-x-12">
@@ -37,9 +44,24 @@
                     <label for="cityNameInput" class="block font-bold text-gray-700">Enter a City Name</label>
                     <input type="text" placeholder="E.g., New York, London, Tokyo" id="cityNameInput"
                         class="border border-gray-400 rounded py-2 px-3 outline-none w-full" required>
+                    <select name="" class="relative -top-4 shadow-md shadow-gray-600 w-full outline-none py-2 pl-4"
+                        id="forcastHistory">
+                        <option value="mumbai">Mumbai</option>
+                        <option value="pune">Pune</option>
+                        <option value="nashik">Nashik</option>
+                        <option value="palghar">Palghar</option>
+                        <option value="karnataka">arnataka</option>
+                    </select>
+                    <!-- <ul class="relative -top-3 shadow-md shadow-gray-600 rounded-md overflow-y-auto overflow-x-hidden max-h-40 hidden"
+                        id="forcastHistory">
+                        <li class="p-2 bg-white border hover:bg-slate-200 duration-150">Dahanu</li>
+                        <li class="p-2 bg-white border hover:bg-slate-200 duration-150">Mumbai</li>
+                        <li class="p-2 bg-white border hover:bg-slate-200 duration-150">Dhule</li>
+                        <li class="p-2 bg-white border hover:bg-slate-200 duration-150">Nashik</li>
+                    </ul> -->
                 </section>
                 <section class="space-y-4 w-1/2 sm:w-4/5 mx-auto">
-                    <button onclick="searchCity()"
+                    <button onclick="searchByCity()"
                         class="w-full bg-blue-500 py-2 text-white font-semibold rounded-md mx-auto block hover:bg-blue-600">Search</button>
                     <section class="flex items-center justify-center space-x-4 w-full mx-auto">
                         <div class="border border-b border-gray-400 w-full"></div>
