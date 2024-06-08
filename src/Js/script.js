@@ -1,6 +1,17 @@
 
+// -------------------------------------- Container to showcase a single and todays weather data --------------------------------------
+
 const weatherDemonstration = document.getElementById('wetherDataDemonstration');
+
+
+// -------------------------------------- Container to showcase extended data (5 days forcast) --------------------------------------
+
 const forcastHolder = document.getElementById('fiveDaysForcast');
+
+
+// -------------------------------------- API_key --------------------------------------
+
+
 const API_key = `1b07387d9e8dc1ccc89c3cf8fce4b121`;
 getWeatherDataByCurrentLocation();
 class LocalStorage {
@@ -29,14 +40,17 @@ class LocalStorage {
         return cityNamesArray;
     }
 }
+
+
+// -------------------------------------- Getting search history from localstorage --------------------------------------
+
 let forcastHistory = LocalStorage.read('forcastHistory') || []
+
 
 
 
 // -------------------------------------- Helpers --------------------------------------
 
-
-// -------  Displaying loading message -------
 
 function loading() {
     return '<p class="text-2xl text-blue-950">Loading....</p>';
@@ -71,6 +85,7 @@ function getWeatherDataByCurrentLocation() {
 };
 
 
+
 // -------------------------------------- Getting latitude and Longitude of current location --------------------------------------
 
 function getPosition(position) {
@@ -81,9 +96,14 @@ function getPosition(position) {
 
 
 
+// -------------------------------------- Display search history --------------------------------------
+
 function displayForCastSearch() {
     const forcastHistoryContainer = document.getElementById('forcastHistory');
     forcastHistoryContainer.innerHTML = " "
+
+    // -------------------------------------- Display dropdown when there is atleast one city is searched. --------------------------------------
+
     if (forcastHistory.length !== 0) {
         forcastHistoryContainer.classList.remove('hidden')
         forcastHistory.forEach((city) => {
@@ -91,9 +111,14 @@ function displayForCastSearch() {
             cityHolder.innerHTML = city
             forcastHistoryContainer.appendChild(cityHolder);
         })
+
+        // -------------------------------------- On select from dropdown Getting weather data by previously searched city --------------------------------------
+
         forcastHistoryContainer.addEventListener('change', (event) => { searchByHistory(event) })
     }
     else {
+        // -------------------------------------- Hide drop down if there is no search history --------------------------------------
+
         forcastHistoryContainer.classList.add('hidden')
     }
 }
@@ -104,16 +129,22 @@ displayForCastSearch();
 
 
 async function searchByHistory(event) {
+    // -------------------------------------- Getting selected element value --------------------------------------
     const searchedCity = event.target.value
+
     const citySearchInputEl = document.getElementById('cityNameInput');
     citySearchInputEl.value = searchedCity
+
+    // -------------------------------------- Getting weather data by passing the city name --------------------------------------
+
     const data = await fetchByCityName(searchedCity)
+
+    // -------------------------------------- Updating the weather data by passing the data --------------------------------------
     updateDisplay(data)
-    // console.log(data)
 }
 
 
-
+// -------------------------------------- Updating display --------------------------------------
 
 function updateDisplay(data = null) {
     weatherDemonstration.innerHTML = ""
@@ -123,29 +154,37 @@ function updateDisplay(data = null) {
 
     const weatherData = {};
     data.list.forEach(item => {
+
+        // Taking timestamp(in seconds) converting it to a date object,
+        // Converting that object in string in formate of ISO 8601 
+        // lastly only extract the date part of YYYY-MM-DD from that string
+
         const date = new Date(item.dt * 1000).toISOString().split('T')[0];
 
         if (!weatherData[date]) {
             weatherData[date] = [];
         }
 
+
         const weatherInfo = {
             temperature: item.main.temp,
             humidity: item.main.humidity,
             windSpeed: item.wind.speed,
-            weatherDescription: item.weather[0].description,
             imageLink: `http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`
         };
         weatherData[date].push(weatherInfo);
     });
 
+    // -------------------------------------- Getting the current date --------------------------------------
 
     const todaysDate = Object.keys(weatherData).splice(0, 1)[0]
 
-    // fetching a weather data of for today Date
+    // -------------------------------------- fetching a weather data for todays Date --------------------------------------
+
     const todayWeatherData = weatherData[todaysDate][0];
 
-    // Retriving weather data 
+    // -------------------------------------- Retriving weather data --------------------------------------
+
     weatherDemonstration.innerHTML = `<img src="${todayWeatherData.imageLink}" alt="weather-img" width="200" height="200" class="object-cover">
                                          <section class="text-white space-y-3 w-full text-center sm:text-left sm:ml-12">
                                                 <h3 class="text-2xl font-semibold">${data.city.name} (${todaysDate})</h3>
@@ -155,16 +194,21 @@ function updateDisplay(data = null) {
                                          </section>`;
 
 
-    // -------------------------------------- Displaying multiple and upcoming 5 day of weather forcast  --------------------------------------
 
+    // -------------------------------------- Displaying multiple and upcoming 5 day of weather forcast excluding todays --------------------------------------
 
     const dates = Object.keys(weatherData).splice(1, 6)
 
     forcastHolder.innerHTML = " "
 
-
     dates.forEach(date => {
+
+        // ---------------------------------------- Creating placeholders to display the extended weather data ----------------------------------------
+
         const weatherDataHolder = document.createElement('section');
+
+        // ---------------------------------------- Adding style to the placeholder (section element) ----------------------------------------
+
         weatherDataHolder.setAttribute('class', 'bg-blue-300 text-gray-700 space-y-3 rounded-md px-6 p-3 flex flex-col items-center sm:flex-row sm:space-x-12 md:flex-col md:mx-auto md:space-x-0 md:text-center shadow-md shadow-gray-800');
 
         const imageLink = weatherData[date][0].imageLink
@@ -172,6 +216,7 @@ function updateDisplay(data = null) {
         const humidity = weatherData[date][0].humidity
         const windSpeed = weatherData[date][0].windSpeed
 
+        // ---------------------------------------- Setting up a template for weather data ----------------------------------------
         weatherDataHolder.innerHTML = `<section class="space-y-4">
                                               <h3 class="text-xl font-semibold">${date}</h3>
                                               <img src="${imageLink}"
@@ -185,10 +230,6 @@ function updateDisplay(data = null) {
         forcastHolder.appendChild(weatherDataHolder)
     })
 }
-
-
-
-
 
 
 
@@ -211,7 +252,6 @@ async function displayWeatherDataByCurrentLocation(latitude, longitude) {
 }
 
 
-
 // -------------------------------------- Showcasing errors of API --------------------------------------
 
 function showError(error) {
@@ -232,8 +272,6 @@ function showError(error) {
 }
 
 
-
-
 // -------------------------------------- Search by city name --------------------------------------
 
 async function searchByCity() {
@@ -247,9 +285,11 @@ async function searchByCity() {
 
             if (data.cod === '200') {
                 // ---------------------------------------- Add a new city into a array ----------------------------------------
+
                 forcastHistory.push(userInputCity.value)
 
                 // ---------------------------------------- Store updated array inside a localstorage ----------------------------------------
+
                 LocalStorage.store('forcastHistory', forcastHistory)
 
                 displayForCastSearch();
@@ -258,6 +298,9 @@ async function searchByCity() {
 
                 updateDisplay(data);
             }
+
+            // ---------------------------------------- Handling errors ----------------------------------------  
+
             else if (data.cod === '404') {
                 weatherDemonstration.innerHTML = `<h1 class="font-semibold text-2xl">Invalid location : ${data.message}</h1>`
                 forcastHolder.innerHTML = " "
