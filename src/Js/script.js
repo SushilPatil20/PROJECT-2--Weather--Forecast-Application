@@ -29,7 +29,6 @@ class LocalStorage {
         return cityNamesArray;
     }
 }
-
 let forcastHistory = LocalStorage.read('forcastHistory') || []
 
 
@@ -37,11 +36,12 @@ let forcastHistory = LocalStorage.read('forcastHistory') || []
 // -------------------------------------- Helpers --------------------------------------
 
 
-// -------------------------------------- Displaying loading message --------------------------------------
+// -------  Displaying loading message -------
 
 function loading() {
     return '<p class="text-2xl text-blue-950">Loading....</p>';
 }
+
 
 
 // -------------------------------------- Fetch data by city name --------------------------------------
@@ -56,6 +56,7 @@ async function fetchByCityName(cityName = null) {
         console.log(error)
     }
 }
+
 
 
 // -------------------------------------- Getting current location --------------------------------------
@@ -80,41 +81,6 @@ function getPosition(position) {
 
 
 
-
-
-// function displayForCastSearch() {
-//     const forcastHistoryContainer = document.getElementById('forcastHistory');
-//     forcastHistoryContainer.innerHTML = " "
-//     if (forcastHistory.length !== 0) {
-//         forcastHistoryContainer.classList.remove('hidden')
-//         forcastHistory.forEach((city) => {
-//             const cityHolder = document.createElement('li')
-//             cityHolder.setAttribute('class', 'p-2 bg-white border hover:bg-slate-200 duration-150 flex items-center justify-between');
-//             cityHolder.innerHTML = city
-//             const cross = document.createElement('span')
-//             cross.setAttribute('class', 'text-3xl rotate-45 cityHolder')
-//             cross.innerHTML = "+"
-//             cityHolder.appendChild(cross)
-//             forcastHistoryContainer.appendChild(cityHolder);
-//         })
-//         const deleteSearchBtn = document.querySelectorAll('span.cityHolder')
-//         deleteSearchBtn.forEach((deleteBtn, idx) => {
-//             deleteBtn.addEventListener('click', () => {
-//                 forcastHistory = forcastHistory.filter((city, index) => index !== idx)
-//                 LocalStorage.store('forcastHistory', forcastHistory)
-//                 displayForCastSearch()
-//             })
-//         })
-
-//     }
-//     else {
-//         forcastHistoryContainer.classList.add('hidden')
-//     }
-// }
-
-
-
-
 function displayForCastSearch() {
     const forcastHistoryContainer = document.getElementById('forcastHistory');
     forcastHistoryContainer.innerHTML = " "
@@ -131,6 +97,8 @@ function displayForCastSearch() {
         forcastHistoryContainer.classList.add('hidden')
     }
 }
+displayForCastSearch();
+
 
 
 
@@ -143,9 +111,6 @@ async function searchByHistory(event) {
     updateDisplay(data)
     // console.log(data)
 }
-
-
-
 
 
 
@@ -190,8 +155,6 @@ function updateDisplay(data = null) {
                                          </section>`;
 
 
-
-
     // -------------------------------------- Displaying multiple and upcoming 5 day of weather forcast  --------------------------------------
 
 
@@ -229,28 +192,6 @@ function updateDisplay(data = null) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // -------------------------------------- Display weather data by users current location --------------------------------------
 
 async function displayWeatherDataByCurrentLocation(latitude, longitude) {
@@ -261,109 +202,13 @@ async function displayWeatherDataByCurrentLocation(latitude, longitude) {
     try {
         const response = await fetch(API_call)
         const data = await response.json();
-
-
         updateDisplay(data)
-
-        // const weatherData = {};
-        // data.list.forEach(item => {
-        //     const date = new Date(item.dt * 1000).toISOString().split('T')[0];
-
-        //     if (!weatherData[date]) {
-        //         weatherData[date] = [];
-        //     }
-
-        //     const weatherInfo = {
-        //         temperature: item.main.temp,
-        //         humidity: item.main.humidity,
-        //         windSpeed: item.wind.speed,
-        //         weatherDescription: item.weather[0].description,
-        //         imageLink: `http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`
-        //     };
-        //     weatherData[date].push(weatherInfo);
-        // });
-
-        // const todaysDate = Object.keys(weatherData).splice(0, 1)[0]
-
-        // // fetching a weather data of for today Date
-        // const todayWeatherData = weatherData[todaysDate][0];
-
-        // // Retriving weather data 
-        // weatherDemonstration.innerHTML = `<img src="${todayWeatherData.imageLink}" alt="weather-img" width="200" height="200" class="object-cover">
-        //                                  <section class="text-white space-y-3 w-full text-center sm:text-left sm:ml-12">
-        //                                         <h3 class="text-2xl font-semibold">${data.city.name} (${todaysDate})</h3>
-        //                                         <p>Temperature : <span>${todayWeatherData.temperature} °C</p>
-        //                                         <p>Wind : ${todayWeatherData.windSpeed} M/S</p>
-        //                                         <p>Humidity : ${todayWeatherData.humidity}%</p>
-        //                                  </section>`;
-
-
-        // // -------------------------------------- Fetching weather data of upcoming 5 days --------------------------------------
-        // const dates = Object.keys(weatherData).splice(1, 6)
-
-        // forcastHolder.innerHTML = " "
-
-
-        // dates.forEach(date => {
-        //     const weatherDataHolder = document.createElement('section');
-        //     weatherDataHolder.setAttribute('class', 'bg-blue-300 text-gray-700 space-y-3 rounded-md px-6 p-3 flex flex-col items-center sm:flex-row sm:space-x-12 md:flex-col md:mx-auto md:space-x-0 md:text-center shadow-md shadow-gray-800');
-
-        //     const imageLink = weatherData[date][0].imageLink
-        //     const temprature = weatherData[date][0].temperature
-        //     const humidity = weatherData[date][0].humidity
-        //     const windSpeed = weatherData[date][0].windSpeed
-
-        //     weatherDataHolder.innerHTML = `<section class="space-y-4">
-        //                                       <h3 class="text-xl font-semibold">${date}</h3>
-        //                                       <img src="${imageLink}"
-        //                                       alt="" width="100" height="100" class="object-cover">
-        //                                    </section>
-        //                                    <section class="space-y-2">
-        //                                       <p>Temperature : <span>${temprature}°C</span></p>
-        //                                       <p>Wind : <span>${windSpeed} M/C</span></p>
-        //                                       <p>Humidity : <span>${humidity}%</span></p>
-        //                                    </section>`
-        //     forcastHolder.appendChild(weatherDataHolder)
-        // })
     }
     catch (error) {
         console.log(error)
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -389,32 +234,6 @@ function showError(error) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // -------------------------------------- Search by city name --------------------------------------
 
 async function searchByCity() {
@@ -427,10 +246,10 @@ async function searchByCity() {
             const data = await fetchByCityName(userInputCity.value)
 
             if (data.cod === '200') {
-                // Add a new city into a array 
+                // ---------------------------------------- Add a new city into a array ----------------------------------------
                 forcastHistory.push(userInputCity.value)
 
-                // Store updated array inside a localstorage
+                // ---------------------------------------- Store updated array inside a localstorage ----------------------------------------
                 LocalStorage.store('forcastHistory', forcastHistory)
 
                 displayForCastSearch();
@@ -456,6 +275,3 @@ async function searchByCity() {
         console.log(error)
     }
 }
-displayForCastSearch();
-
-
