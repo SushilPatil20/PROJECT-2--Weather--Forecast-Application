@@ -38,12 +38,14 @@ let forcastHistory = LocalStorage.read('forcastHistory') || []
 
 
 // -------------------------------------- Displaying loading message --------------------------------------
+
 function loading() {
     return '<p class="text-2xl text-blue-950">Loading....</p>';
 }
 
 
 // -------------------------------------- Fetch data by city name --------------------------------------
+
 async function fetchByCityName(cityName = null) {
     try {
         const response = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${API_key}&units=metric`);
@@ -54,6 +56,29 @@ async function fetchByCityName(cityName = null) {
         console.log(error)
     }
 }
+
+
+// -------------------------------------- Getting current location --------------------------------------
+
+function getWeatherDataByCurrentLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(getPosition, showError);
+    }
+    else {
+        weatherDemonstration.innerHTML = "Geolocation is not supported for this browser.";
+    }
+};
+
+
+// -------------------------------------- Getting latitude and Longitude of current location --------------------------------------
+
+function getPosition(position) {
+    const latitude = position.coords.latitude
+    const longitude = position.coords.longitude
+    displayWeatherDataByCurrentLocation(latitude, longitude);
+}
+
+
 
 
 
@@ -108,12 +133,15 @@ function displayForCastSearch() {
 }
 
 
+
+
 async function searchByHistory(event) {
     const searchedCity = event.target.value
     const citySearchInputEl = document.getElementById('cityNameInput');
     citySearchInputEl.value = searchedCity
     const data = await fetchByCityName(searchedCity)
-    console.log(data)
+    updateDisplay(data)
+    // console.log(data)
 }
 
 
@@ -123,9 +151,76 @@ async function searchByHistory(event) {
 
 
 function updateDisplay(data = null) {
+    weatherDemonstration.innerHTML = ""
+    forcastHolder.innerHTML = ""
+
+    // -------------------------------------- Displaying single and todays weather --------------------------------------
+
+    const weatherData = {};
+    data.list.forEach(item => {
+        const date = new Date(item.dt * 1000).toISOString().split('T')[0];
+
+        if (!weatherData[date]) {
+            weatherData[date] = [];
+        }
+
+        const weatherInfo = {
+            temperature: item.main.temp,
+            humidity: item.main.humidity,
+            windSpeed: item.wind.speed,
+            weatherDescription: item.weather[0].description,
+            imageLink: `http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`
+        };
+        weatherData[date].push(weatherInfo);
+    });
+
+
+    const todaysDate = Object.keys(weatherData).splice(0, 1)[0]
+
+    // fetching a weather data of for today Date
+    const todayWeatherData = weatherData[todaysDate][0];
+
+    // Retriving weather data 
+    weatherDemonstration.innerHTML = `<img src="${todayWeatherData.imageLink}" alt="weather-img" width="200" height="200" class="object-cover">
+                                         <section class="text-white space-y-3 w-full text-center sm:text-left sm:ml-12">
+                                                <h3 class="text-2xl font-semibold">${data.city.name} (${todaysDate})</h3>
+                                                <p>Temperature : <span>${todayWeatherData.temperature} °C</p>
+                                                <p>Wind : ${todayWeatherData.windSpeed} M/S</p>
+                                                <p>Humidity : ${todayWeatherData.humidity}%</p>
+                                         </section>`;
 
 
 
+
+    // -------------------------------------- Displaying multiple and upcoming 5 day of weather forcast  --------------------------------------
+
+
+    const dates = Object.keys(weatherData).splice(1, 6)
+
+    forcastHolder.innerHTML = " "
+
+
+    dates.forEach(date => {
+        const weatherDataHolder = document.createElement('section');
+        weatherDataHolder.setAttribute('class', 'bg-blue-300 text-gray-700 space-y-3 rounded-md px-6 p-3 flex flex-col items-center sm:flex-row sm:space-x-12 md:flex-col md:mx-auto md:space-x-0 md:text-center shadow-md shadow-gray-800');
+
+        const imageLink = weatherData[date][0].imageLink
+        const temprature = weatherData[date][0].temperature
+        const humidity = weatherData[date][0].humidity
+        const windSpeed = weatherData[date][0].windSpeed
+
+        weatherDataHolder.innerHTML = `<section class="space-y-4">
+                                              <h3 class="text-xl font-semibold">${date}</h3>
+                                              <img src="${imageLink}"
+                                              alt="" width="100" height="100" class="object-cover">
+                                           </section>
+                                           <section class="space-y-2">
+                                              <p>Temperature : <span>${temprature}°C</span></p>
+                                              <p>Wind : <span>${windSpeed} M/C</span></p>
+                                              <p>Humidity : <span>${humidity}%</span></p>
+                                           </section>`
+        forcastHolder.appendChild(weatherDataHolder)
+    })
 }
 
 
@@ -149,25 +244,11 @@ function updateDisplay(data = null) {
 
 
 
-// -------------------------------------- Getting current location --------------------------------------
-
-function getWeatherDataByCurrentLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(getPosition, showError);
-    }
-    else {
-        weatherDemonstration.innerHTML = "Geolocation is not supported for this browser.";
-    }
-};
 
 
-// -------------------------------------- Getting latitude and Longitude of current location --------------------------------------
 
-function getPosition(position) {
-    const latitude = position.coords.latitude
-    const longitude = position.coords.longitude
-    displayWeatherDataByCurrentLocation(latitude, longitude);
-}
+
+
 
 
 // -------------------------------------- Display weather data by users current location --------------------------------------
@@ -181,66 +262,69 @@ async function displayWeatherDataByCurrentLocation(latitude, longitude) {
         const response = await fetch(API_call)
         const data = await response.json();
 
-        const weatherData = {};
-        data.list.forEach(item => {
-            const date = new Date(item.dt * 1000).toISOString().split('T')[0];
 
-            if (!weatherData[date]) {
-                weatherData[date] = [];
-            }
+        updateDisplay(data)
 
-            const weatherInfo = {
-                temperature: item.main.temp,
-                humidity: item.main.humidity,
-                windSpeed: item.wind.speed,
-                weatherDescription: item.weather[0].description,
-                imageLink: `http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`
-            };
-            weatherData[date].push(weatherInfo);
-        });
+        // const weatherData = {};
+        // data.list.forEach(item => {
+        //     const date = new Date(item.dt * 1000).toISOString().split('T')[0];
 
-        const todaysDate = Object.keys(weatherData).splice(0, 1)[0]
+        //     if (!weatherData[date]) {
+        //         weatherData[date] = [];
+        //     }
 
-        // fetching a weather data of for today Date
-        const todayWeatherData = weatherData[todaysDate][0];
+        //     const weatherInfo = {
+        //         temperature: item.main.temp,
+        //         humidity: item.main.humidity,
+        //         windSpeed: item.wind.speed,
+        //         weatherDescription: item.weather[0].description,
+        //         imageLink: `http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`
+        //     };
+        //     weatherData[date].push(weatherInfo);
+        // });
 
-        // Retriving weather data 
-        weatherDemonstration.innerHTML = `<img src="${todayWeatherData.imageLink}" alt="weather-img" width="200" height="200" class="object-cover">
-                                         <section class="text-white space-y-3 w-full text-center sm:text-left sm:ml-12">
-                                                <h3 class="text-2xl font-semibold">${data.city.name} (${todaysDate})</h3>
-                                                <p>Temperature : <span>${todayWeatherData.temperature} °C</p>
-                                                <p>Wind : ${todayWeatherData.windSpeed} M/S</p>
-                                                <p>Humidity : ${todayWeatherData.humidity}%</p>
-                                         </section>`;
+        // const todaysDate = Object.keys(weatherData).splice(0, 1)[0]
 
+        // // fetching a weather data of for today Date
+        // const todayWeatherData = weatherData[todaysDate][0];
 
-        // -------------------------------------- Fetching weather data of upcoming 5 days --------------------------------------
-        const dates = Object.keys(weatherData).splice(1, 6)
-
-        forcastHolder.innerHTML = " "
+        // // Retriving weather data 
+        // weatherDemonstration.innerHTML = `<img src="${todayWeatherData.imageLink}" alt="weather-img" width="200" height="200" class="object-cover">
+        //                                  <section class="text-white space-y-3 w-full text-center sm:text-left sm:ml-12">
+        //                                         <h3 class="text-2xl font-semibold">${data.city.name} (${todaysDate})</h3>
+        //                                         <p>Temperature : <span>${todayWeatherData.temperature} °C</p>
+        //                                         <p>Wind : ${todayWeatherData.windSpeed} M/S</p>
+        //                                         <p>Humidity : ${todayWeatherData.humidity}%</p>
+        //                                  </section>`;
 
 
-        dates.forEach(date => {
-            const weatherDataHolder = document.createElement('section');
-            weatherDataHolder.setAttribute('class', 'bg-blue-300 text-gray-700 space-y-3 rounded-md px-6 p-3 flex flex-col items-center sm:flex-row sm:space-x-12 md:flex-col md:mx-auto md:space-x-0 md:text-center shadow-md shadow-gray-800');
+        // // -------------------------------------- Fetching weather data of upcoming 5 days --------------------------------------
+        // const dates = Object.keys(weatherData).splice(1, 6)
 
-            const imageLink = weatherData[date][0].imageLink
-            const temprature = weatherData[date][0].temperature
-            const humidity = weatherData[date][0].humidity
-            const windSpeed = weatherData[date][0].windSpeed
+        // forcastHolder.innerHTML = " "
 
-            weatherDataHolder.innerHTML = `<section class="space-y-4">
-                                              <h3 class="text-xl font-semibold">${date}</h3>
-                                              <img src="${imageLink}"
-                                              alt="" width="100" height="100" class="object-cover">
-                                           </section>
-                                           <section class="space-y-2">
-                                              <p>Temperature : <span>${temprature}°C</span></p>
-                                              <p>Wind : <span>${windSpeed} M/C</span></p>
-                                              <p>Humidity : <span>${humidity}%</span></p>
-                                           </section>`
-            forcastHolder.appendChild(weatherDataHolder)
-        })
+
+        // dates.forEach(date => {
+        //     const weatherDataHolder = document.createElement('section');
+        //     weatherDataHolder.setAttribute('class', 'bg-blue-300 text-gray-700 space-y-3 rounded-md px-6 p-3 flex flex-col items-center sm:flex-row sm:space-x-12 md:flex-col md:mx-auto md:space-x-0 md:text-center shadow-md shadow-gray-800');
+
+        //     const imageLink = weatherData[date][0].imageLink
+        //     const temprature = weatherData[date][0].temperature
+        //     const humidity = weatherData[date][0].humidity
+        //     const windSpeed = weatherData[date][0].windSpeed
+
+        //     weatherDataHolder.innerHTML = `<section class="space-y-4">
+        //                                       <h3 class="text-xl font-semibold">${date}</h3>
+        //                                       <img src="${imageLink}"
+        //                                       alt="" width="100" height="100" class="object-cover">
+        //                                    </section>
+        //                                    <section class="space-y-2">
+        //                                       <p>Temperature : <span>${temprature}°C</span></p>
+        //                                       <p>Wind : <span>${windSpeed} M/C</span></p>
+        //                                       <p>Humidity : <span>${humidity}%</span></p>
+        //                                    </section>`
+        //     forcastHolder.appendChild(weatherDataHolder)
+        // })
     }
     catch (error) {
         console.log(error)
@@ -353,74 +437,7 @@ async function searchByCity() {
 
                 userInputCity.value = ""
 
-
-
-                const weatherData = {}
-                data.list.forEach((item) => {
-                    const date = new Date(item.dt * 1000).toISOString().split('T')[0];
-
-                    if (!weatherData[date]) {
-                        weatherData[date] = []
-                    }
-
-                    const weatherInfo = {
-                        temperature: item.main.temp,
-                        humidity: item.main.humidity,
-                        windSpeed: item.wind.speed,
-                        weatherDescription: item.weather[0].description,
-                        imageLink: `http://openweathermap.org/img/wn/${item.weather[0].icon}@2x.png`
-                    }
-
-                    weatherData[date].push(weatherInfo)
-                })
-
-                const todaysDate = Object.keys(weatherData).splice(0, 1)[0]
-
-
-                const todaysWeatherData = weatherData[todaysDate][0]
-
-                const cityName = data.city.name
-                const temperature = todaysWeatherData.temperature
-                const humidity = todaysWeatherData.humidity
-                const imageLink = todaysWeatherData.imageLink
-                const windSpeed = todaysWeatherData.windSpeed
-
-                weatherDemonstration.innerHTML = `<img src="${imageLink}" alt="weather-img" width="200" height="200" class="object-cover">
-                                                      <section class="text-white space-y-3 w-full text-center sm:text-left sm:ml-12">
-                                                         <h3 class="text-2xl font-semibold">${cityName} (${todaysDate})</h3>
-                                                         <p>Temperature : <span>${temperature} °C</p>
-                                                         <p>Wind : ${windSpeed} M/S</p>
-                                                         <p>Humidity : ${humidity}%</p>
-                                                      </section>`
-
-
-
-                const dates = Object.keys(weatherData).splice(1, 6)
-                forcastHolder.innerHTML = " "
-
-                dates.forEach(date => {
-                    const weatherDataHolder = document.createElement('section');
-                    weatherDataHolder.setAttribute('class', 'bg-blue-300 text-gray-700 space-y-3 rounded-md px-6 p-3 flex flex-col items-center sm:flex-row sm:space-x-12 md:flex-col md:mx-auto md:space-x-0 md:text-center shadow-md shadow-gray-800');
-
-
-                    const imageLink = weatherData[date][0].imageLink
-                    const temprature = weatherData[date][0].temperature
-                    const humidity = weatherData[date][0].humidity
-                    const windSpeed = weatherData[date][0].windSpeed
-
-
-                    weatherDataHolder.innerHTML = `<section class="space-y-4">
-                                                      <h3 class="text-xl font-semibold">${date}</h3>
-                                                      <img src="${imageLink}"
-                                                      alt="" width="100" height="100" class="object-cover">
-                                                   </section>
-                                                   <section class="space-y-2">
-                                                      <p>Temperature : <span>${temprature}°C</span></p>
-                                                      <p>Wind : <span>${windSpeed} M/C</span></p>
-                                                      <p>Humidity : <span>${humidity}%</span></p>
-                                                   </section>`
-                    forcastHolder.appendChild(weatherDataHolder)
-                })
+                updateDisplay(data);
             }
             else if (data.cod === '404') {
                 weatherDemonstration.innerHTML = `<h1 class="font-semibold text-2xl">Invalid location : ${data.message}</h1>`
