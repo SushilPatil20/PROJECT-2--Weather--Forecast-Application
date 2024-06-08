@@ -41,3 +41,6 @@ This is a simple weather forecast application built using HTML, CSS (Tailwind CS
    cd weather-forecast-app
 
 3. Open the index.html file in your preferred web browser.
+
+
+<strong>Go live : </strong> https://weather-forcasting-application.netlify.app/
